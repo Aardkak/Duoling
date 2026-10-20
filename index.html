@@ -1,52 +1,63 @@
 <!doctype html><html lang="nl"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black"><meta name="theme-color" content="#121212">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"><meta name="theme-color" content="#15141d">
 <meta name="apple-mobile-web-app-title" content="Denkpad"><link rel="manifest" href="manifest.json"><title>Denkpad</title>
 <style>
-:root{--bg:#121212;--s:#1b1b1b;--m:#6a6a6a;--t:#eee;--a:#b89f6b}
+:root{--bg:#15141d;--s:#211f2e;--s2:#2a2840;--m:#9d99b8;--t:#f3f0fc;--a:#ffc857}
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
-html,body{margin:0;background:var(--bg);color:var(--t);font:18px/1.7 ui-serif,"Iowan Old Style",Georgia,serif}
-body{max-width:560px;margin:0 auto;padding:calc(env(safe-area-inset-top,0px) + 20px) 18px calc(env(safe-area-inset-bottom,0px) + 28px)}
-.top{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:28px}
-h1{font-size:22px;font-weight:400;margin:0;letter-spacing:.02em}
-.xp,.m{color:var(--m);font-size:14px;font-family:ui-monospace,Menlo,monospace}
-h2{font-size:15px;font-weight:400;font-style:italic;color:var(--a);margin:30px 0 8px}
-button{font:inherit;color:inherit;border-radius:0;cursor:pointer}
-.node{display:block;width:100%;text-align:left;background:var(--s);border:1px solid #2c2c2c;border-left:3px solid var(--a);padding:14px 16px;margin:0 0 8px}
-.node.done{border-color:var(--a)}
-.node:disabled{opacity:.35;border-left-color:var(--m)}
-.p{width:100%;margin-top:20px;padding:14px;background:var(--a);color:#121212;border:0}
-.c{font-style:italic;font-size:20px;border-left:3px solid var(--a);padding-left:16px}
+html,body{margin:0;min-height:100%;background:var(--bg);color:var(--t);font:17px/1.65 ui-rounded,-apple-system,"Helvetica Neue",sans-serif}
+body{background:radial-gradient(circle at 15% -5%,#3b2f6b55,transparent 45%),radial-gradient(circle at 100% 30%,#1f6b6b44,transparent 40%),var(--bg);background-attachment:fixed;max-width:560px;margin:0 auto;padding:calc(env(safe-area-inset-top,0px) + 16px) 18px calc(env(safe-area-inset-bottom,0px) + 30px)}
+header{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px}
+h1{font-size:24px;margin:0;font-weight:700;letter-spacing:-.01em}
+h2{font-size:22px;margin:18px 0 10px;color:var(--a);line-height:1.25}
+p{margin:0 0 14px}.m{color:var(--m);font-size:14px}
+button{font:inherit;color:inherit;cursor:pointer;border:0}
+.b{background:var(--s);padding:8px 14px;border-radius:99px;font-size:14px}
+.card{display:block;width:100%;text-align:left;background:var(--s);border:1px solid #ffffff14;border-left:4px solid var(--a);border-radius:14px;padding:14px 16px;margin:0 0 10px}
+.card b{display:block;margin-bottom:2px}
+.card.ok{background:#1d3a33;border-color:#5ec2b7}.card.no{background:#3d2530;border-color:#ff8a6b}
+.p{width:100%;margin-top:18px;padding:15px;border-radius:14px;background:var(--a);color:#15141d;font-weight:700}
+.bar{height:6px;background:var(--s2);border-radius:9px;margin:2px 0 8px;overflow:hidden}.bar i{display:block;height:100%;background:var(--a);border-radius:9px}
+.q{font-size:21px;font-style:italic;line-height:1.5;border-left:4px solid var(--a);padding-left:14px;margin:18px 0 12px}
+.ex{background:var(--s);border-radius:14px;padding:14px 16px;margin-top:14px}
+.w{background:linear-gradient(135deg,var(--s2),var(--s));border-radius:16px;padding:18px;border:1px solid #ffffff14}
 a,label{color:var(--a);text-decoration:underline;cursor:pointer}
+svg text{font-family:inherit}
 </style></head><body><div id="app"></div>
 <script src="content.js"></script>
 <script>
-const K='denkpad',A=document.getElementById('app');
-let S={xp:0,done:[]};try{S=Object.assign(S,JSON.parse(localStorage.getItem(K)||'{}'))}catch(e){}
+const K='denkpad2',A=document.getElementById('app');
+let S={xp:0,p:{},d:{}};try{S=Object.assign(S,JSON.parse(localStorage.getItem(K)||'{}'))}catch(e){}
 const sv=()=>{try{localStorage.setItem(K,JSON.stringify(S))}catch(e){}};
-const ok=n=>n.r.every(r=>S.done.includes(r));
-function tree(){
- let h=`<div class=top><h1>Denkpad</h1><span class=xp>${S.xp} xp, ${S.done.length} van ${N.length}</span></div>`;
- for(const k in BR){h+=`<h2 style="--a:${BR[k][1]}">${BR[k][0]}</h2>`;
-  for(const n of N.filter(n=>n.b==k)){const d=S.done.includes(n.id),o=ok(n);
-   h+=`<button class="node ${d?'done':''}" style="--a:${BR[k][1]}" ${o?`onclick="go('${n.id}')"`:'disabled'}>${d?'✓ ':''}${n.n}</button>`}}
- h+=`<p class=m style="margin-top:36px"><a onclick=ex()>exporteer voortgang</a><br><label>importeer voortgang<input type=file hidden accept=.json onchange="im(this.files[0])"></label></p>`;
+const nd=t=>t.s.filter(s=>S.d[t.id+s.id]).length;
+const open=t=>t.r.every(r=>nd(T.find(x=>x.id==r))>0);
+let cur,sub,i,k;
+function map(){
+ const H=Math.max(...T.map(t=>t.y))+95;
+ let h=`<header><h1>Denkpad</h1><span class=m>${S.xp} xp</span></header><p class=m>Tik op een ster. Elke ster opent nieuwe sterren.</p><svg viewBox="0 0 360 ${H}" width="100%">`;
+ for(const t of T)for(const r of t.r){const q=T.find(x=>x.id==r);h+=`<line x1=${q.x} y1=${q.y} x2=${t.x} y2=${t.y} stroke="${nd(q)?t.c:'#3a3758'}" stroke-width=2 stroke-dasharray="${nd(q)?'':'4 6'}" opacity=.7 />`}
+ for(const t of T){const o=open(t),p=nd(t)/t.s.length;
+  h+=`<g ${o?`onclick="sh('${t.id}')"`:''} style="opacity:${o?1:.35};cursor:pointer"><circle cx=${t.x} cy=${t.y} r=40 fill="${t.c}" opacity=.08 /><circle cx=${t.x} cy=${t.y} r=34 fill=none stroke=#2a2840 stroke-width=5 /><circle cx=${t.x} cy=${t.y} r=34 fill=none stroke="${t.c}" stroke-width=5 stroke-linecap=round stroke-dasharray="${213.6*p} 214" transform="rotate(-90 ${t.x} ${t.y})" /><circle cx=${t.x} cy=${t.y} r=28 fill=#211f2e /><text x=${t.x} y=${t.y} dy=".35em" text-anchor=middle font-size=26 font-weight=700 fill="${t.c}">${t.g}</text><text x=${t.x} y=${t.y+55} text-anchor=middle font-size=13 fill=#f3f0fc>${t.n}</text></g>`}
+ h+=`</svg><p class=m style="margin-top:20px"><a onclick=ex()>exporteer voortgang</a><br><label>importeer voortgang<input type=file hidden accept=.json onchange="im(this.files[0])"></label></p>`;
  A.innerHTML=h}
-let L,i;
-function go(id){const n=N.find(x=>x.id==id);L={n,c:BR[n.b][1],s:[['u',n.u],['q',...n.q],['d',...n.d],['c',...n.c]]};i=0;st()}
-function st(){const[t,...a]=L.s[i];
- let h=`<div style="--a:${L.c}"><div class=top><h1>${L.n.n}</h1><span class=xp>${i+1} van 4</span></div>`;
- if(t=='u')h+=`<p>${a[0]}</p><button class=p onclick="nx(2)">Verder</button>`;
- if(t=='c')h+=`<p class=c>${a[0]}</p><p class=m>${a[1]}</p><button class=p onclick="nx(2)">Afronden</button>`;
- if(t=='q')h+=`<p>${a[0]}</p>`+[1,2,3].map(j=>`<button class=node id=o${j} onclick="pq(${j})">${a[j]}</button>`).join('');
- if(t=='d')h+=`<p>${a[0]}</p>`+[1,3].map(j=>`<button class=node id=o${j} onclick="pd(${j})">${a[j]}</button>`).join('');
- A.innerHTML=h+'<div id=f></div></div>'}
-function fb(m,x){document.querySelectorAll('.node').forEach(b=>b.disabled=true);document.getElementById('f').innerHTML=`<p class=m>${m}</p><button class=p onclick="nx(${x})">Verder</button>`}
-function pq(j){const a=L.s[i].slice(1),r=a[4]+1;document.getElementById('o'+r).classList.add('done');fb(j==r?'Juist.':'Niet helemaal. Het juiste antwoord is gemarkeerd.',j==r?10:3)}
-function pd(j){const a=L.s[i].slice(1);document.getElementById('o'+j).classList.add('done');fb(a[j+1],5)}
-function nx(x){S.xp+=x;i++;if(i<4){sv();st()}else{if(!S.done.includes(L.n.id)){S.done.push(L.n.id);S.xp+=5}sv();tree()}}
+function sh(id){const t=T.find(x=>x.id==id);cur=t;
+ A.innerHTML=`<header><button class=b onclick=map()>← kaart</button><span class=m>${nd(t)} van ${t.s.length} klaar</span></header><div style="--a:${t.c}"><h2 style="font-size:28px">${t.g} ${t.n}</h2><p>${t.ds}</p>`+t.s.map((s,j)=>{const d=S.d[t.id+s.id],p=S.p[t.id+s.id]||0;return `<button class=card onclick="play(${j})"><b>${s.n}</b><span class=m>${d?'Afgerond, tik om opnieuw te spelen':p?`Verder bij stap ${p+1} van ${s.p.length}`:`${s.p.length} stappen, ongeveer ${s.p.length*2} minuten`}</span></button>`}).join('')+'</div>'}
+function play(j){sub=cur.s[j];k=cur.id+sub.id;i=S.d[k]?0:(S.p[k]||0);pg()}
+const nx=l=>`<button class=p onclick=go()>${l}</button>`;
+function pg(){const[t,...a]=sub.p[i],n=sub.p.length;
+ let h=`<header><button class=b onclick="sh('${cur.id}')">← pauzeer</button><span class=m>${i+1} van ${n}</span></header><div class=bar style="--a:${cur.c}"><i style="width:${(i+1)/n*100}%"></i></div><div style="--a:${cur.c}">`;
+ if(t=='w')h+=`<div class=w><h2 style="margin-top:0">${a[0]}</h2><p class=m>${a[1]}</p><p style="margin:0">${a[2]}</p></div>${nx('Verder')}`;
+ if(t=='u')h+=`<h2>${a[0]}</h2>`+a[1].split('\n').map(x=>`<p>${x}</p>`).join('')+nx('Verder');
+ if(t=='c')h+=`<p class=q>${a[0]}</p><p class=m>${a[1]}</p><div class=ex>${a[2]}</div>${nx('Verder')}`;
+ if(t=='q')h+=`<p class=q>${a[0]}</p>`+a[1].map((o,j)=>`<button class=card id=o${j} onclick="pq(${j})">${o}</button>`).join('')+'<div id=f></div>';
+ if(t=='d')h+=`<p class=q>${a[0]}</p>`+a.slice(1).map((o,j)=>`<button class=card id=o${j} onclick="pd(${j})">${o[0]}</button>`).join('')+'<div id=f></div>';
+ A.innerHTML=h+'</div>';window.scrollTo(0,0)}
+function lock(){document.querySelectorAll('.card').forEach(b=>b.onclick=null)}
+function pq(j){const a=sub.p[i].slice(1),r=a[2];lock();document.getElementById('o'+r).classList.add('ok');if(j!=r)document.getElementById('o'+j).classList.add('no');S.xp+=j==r?10:3;document.getElementById('f').innerHTML=`<div class=ex><b>${j==r?'Juist.':'Niet helemaal.'}</b> ${a[3]}</div>${nx('Verder')}`}
+function pd(j){const a=sub.p[i].slice(1);lock();document.getElementById('o'+j).classList.add('ok');S.xp+=5;document.getElementById('f').innerHTML=a.map((o,x)=>`<div class=ex><b>${x==j?'Jouw keuze':'De andere weg'}:</b> ${o[1]}</div>`).join('')+nx('Verder')}
+function go(){i++;if(i>=sub.p.length){S.d[k]=1;S.p[k]=0;S.xp+=25;sv();sh(cur.id)}else{S.p[k]=i;sv();pg()}}
 function ex(){const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([JSON.stringify(S)],{type:'application/json'}));a.download='denkpad.json';a.click()}
-function im(f){if(!f)return;f.text().then(t=>{const d=JSON.parse(t);S.xp=d.xp|0;S.done=Array.isArray(d.done)?d.done:[];sv();tree()})}
-tree();if('serviceWorker'in navigator)navigator.serviceWorker.register('sw.js');
+function im(f){if(!f)return;f.text().then(t=>{const d=JSON.parse(t);S.xp=d.xp|0;S.p=d.p||{};S.d=d.d||{};sv();map()})}
+map();if('serviceWorker'in navigator)navigator.serviceWorker.register('sw.js');
 </script></body></html>
